@@ -1,0 +1,2 @@
+D:/Flutter_Projects/budget_tracker/android/app/.cxx/RelWithDebInfo/4r2o2k5h/x86_64/CMakeFiles/edit_cache.dir
+D:/Flutter_Projects/budget_tracker/android/app/.cxx/RelWithDebInfo/4r2o2k5h/x86_64/CMakeFiles/rebuild_cache.dir
