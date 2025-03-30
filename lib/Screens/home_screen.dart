@@ -30,6 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+
   _dialogBuilder(BuildContext context){
     return showDialog(context: context,
      builder: (context){
@@ -66,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
-          HeroCard(),
+          HeroCard(userId: userId,),
          TransactionCards(),
         ],
       ),
