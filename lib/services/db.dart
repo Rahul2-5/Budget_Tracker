@@ -1,19 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class Db {
-  final CollectionReference _users = FirebaseFirestore.instance.collection('users');
+  final CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-  Future<void> addUser(Map<String, dynamic> data, String userId) async {
-    try {
-      // Add createdAt timestamp for debugging
-      data['createdAt'] = FieldValue.serverTimestamp();
-
-      // Store user data in Firestore
-      await _users.doc(userId).set(data, SetOptions(merge: true));
-      
-      print("User Data Successfully Added to Firestore");
-    } catch (e) {
-      print("Error adding user to Firestore: $e");
-    }
+  Future<void> addUser(data , context) async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    await users
+        .doc(userId)
+        .set(data)
+        .then((value) => print("User Added"))
+        .catchError((error){
+          showDialog(
+            context:context,
+            builder : (context){
+              return AlertDialog(
+                title: Text("Sign up Failed"),
+                content: Text(error.toString()),
+              );
+            });
+        });
   }
-}
+  
+  }
+

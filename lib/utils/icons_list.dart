@@ -10,7 +10,7 @@ class AppIcons {
     },
     {
       "name": "Grocery",
-      "icon": FontAwesomeIcons.shoppingCart,
+      "icon": FontAwesomeIcons.cartShopping,
     },
     {
       "name": "Milk",
@@ -30,7 +30,7 @@ class AppIcons {
     },
     {
       "name": "Rent",
-      "icon": FontAwesomeIcons.home,
+      "icon": FontAwesomeIcons.house,
     },
     {
       "name": "Phone Bill",
@@ -46,7 +46,7 @@ class AppIcons {
     },
     {
       "name": "Healthcare",
-      "icon": FontAwesomeIcons.medkit,
+      "icon": FontAwesomeIcons.suitcaseMedical,
     },
     {
       "name": "Transportation",
@@ -54,11 +54,11 @@ class AppIcons {
     },
     {
       "name": "Clothing",
-      "icon": FontAwesomeIcons.tshirt,
+      "icon": FontAwesomeIcons.shirt,
     },
     {
       "name": "Insurance",
-      "icon": FontAwesomeIcons.shieldAlt,
+      "icon": FontAwesomeIcons.shieldHalved,
     },
     {
       "name": "Education",
@@ -74,7 +74,7 @@ class AppIcons {
     final category = HomeExpensesCategory.firstWhere(
       (category) => category['name'] == categoryName,
       orElse: () => {
-        "icon" : FontAwesomeIcons.shoppingCart
+        "icon" : FontAwesomeIcons.cartShopping
       }
     );
     return category['icon'];
