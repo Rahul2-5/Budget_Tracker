@@ -12,7 +12,20 @@
           "package_name": "com.example.budget_tracker"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1026331816736-svtlfsbvjcirr9q8c0dj6ihmeenddffe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.budget_tracker",
+            "certificate_hash": "d58318367a19b1c0d32ba1a41054f5d07f94f228"
+          }
+        },
+        {
+          "client_id": "1026331816736-9vfa0rj0epr8758q3pjtvdeq0h1kgeah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCMEG504SmsyRD1hhM6qkxfm_YtqV9SOqA"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026331816736-9vfa0rj0epr8758q3pjtvdeq0h1kgeah.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026331816736-r5k1q0h36hrdchv4boudjoutrles5lpn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.budgetTracker"
+              }
+            }
+          ]
         }
       }
     }

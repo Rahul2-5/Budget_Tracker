@@ -69,80 +69,109 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   final uid = Uuid();
 
   void _submitForm() async {
-    if (!_formKey.currentState!.validate()) return;
+  if (!_formKey.currentState!.validate()) return;
 
-    setState(() => isLoader = true);
+  setState(() => isLoader = true);
 
+  try {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print("Error: User not logged in");
+      return;
+    }
+
+    String userId = user.uid;
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    int amount;
+
+    // **Handle invalid amount input**
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        print("Error: User not logged in");
-        return;
-      }
+      amount = int.parse(amountEditController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter a valid number")),
+      );
+      return;
+    }
 
-      String userId = user.uid;
-      int timestamp = DateTime.now().millisecondsSinceEpoch;
-      int amount = int.parse(amountEditController.text);
-      DateTime date = DateTime.now();
-      String id = uid.v4();
-      String monthyear = DateFormat('MMM y').format(date);
+    DateTime date = DateTime.now();
+    String id = uid.v4();
+    String monthyear = DateFormat('MMM y').format(date);
 
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
+    final userDoc = await userDocRef.get();
 
-      if (!userDoc.exists) {
-        print("Error: User document does not exist");
-        return;
-      }
-
-      int remainingAmount = userDoc['remainingAmount'];
-      int totalCredit = userDoc['totalCredit'];
-      int totalDebit = userDoc['totalDebit'];
-
-      if (type == 'credit') {
-        remainingAmount += amount;
-        totalCredit += amount;
-      } else {
-        remainingAmount -= amount;
-        totalDebit += amount;
-      }
-
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
-        "remainingAmount": remainingAmount,
-        "totalCredit": totalCredit,
-        "totalDebit": totalDebit,
+    // ✅ If user document doesn't exist or is missing required fields, initialize it
+    if (!userDoc.exists || !userDoc.data()!.containsKey('remainingAmount')) {
+      await userDocRef.set({
+        "name": user.displayName ?? '',
+        "email": user.email ?? '',
+        "photoUrl": user.photoURL ?? '',
+        "provider": user.providerData.isNotEmpty ? user.providerData[0].providerId : 'google',
+        "createdAt": DateTime.now().toIso8601String(),
+        "remainingAmount": 0,
+        "totalCredit": 0,
+        "totalDebit": 0,
         "updatedAt": timestamp,
       });
-
-      var data = {
-        "id": id,
-        "title": titleEditController.text,
-        "amount": amount,
-        "type": type,
-        "timestamp": timestamp,
-        "totalCredit": totalCredit,
-        "totalDebit": totalDebit,
-        "remainingAmount": remainingAmount,
-        "monthyear": monthyear,
-        "category": category,
-      };
-
-      print("Saving transaction to: users/$userId/transactions/$id");
-
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .collection("transactions")
-          .doc(id)
-          .set(data);
-
-      print("Transaction added successfully");
-      Navigator.pop(context); // Close the dialog
-    } catch (error) {
-      print("Error adding transaction: $error");
-    } finally {
-      setState(() => isLoader = false);
     }
+
+    // Fetch updated user doc after initialization
+    final updatedUserDoc = await userDocRef.get();
+    int remainingAmount = updatedUserDoc['remainingAmount'];
+    int totalCredit = updatedUserDoc['totalCredit'];
+    int totalDebit = updatedUserDoc['totalDebit'];
+
+    if (type == 'credit') {
+      remainingAmount += amount;
+      totalCredit += amount;
+    } else {
+      remainingAmount -= amount;
+      totalDebit += amount;
+    }
+
+    await userDocRef.update({
+      "remainingAmount": remainingAmount,
+      "totalCredit": totalCredit,
+      "totalDebit": totalDebit,
+      "updatedAt": timestamp,
+    });
+
+    var data = {
+      "id": id,
+      "title": titleEditController.text,
+      "amount": amount,
+      "type": type,
+      "timestamp": timestamp,
+      "totalCredit": totalCredit,
+      "totalDebit": totalDebit,
+      "remainingAmount": remainingAmount,
+      "monthyear": monthyear,
+      "category": category,
+      "date": date.toIso8601String(),
+
+      // ✅ Optional: store user info in the transaction too
+      "name": user.displayName ?? '',
+      "email": user.email ?? '',
+      "photoUrl": user.photoURL ?? '',
+      "provider": user.providerData.isNotEmpty ? user.providerData[0].providerId : 'google',
+    };
+
+    // Save transaction to Firestore
+    await userDocRef.collection("transactions").doc(id).set(data);
+
+    print("Transaction added successfully");
+    Navigator.pop(context); // Close the dialog
+  } catch (error) {
+    print("Error adding transaction: $error");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error: ${error.toString()}")),
+    );
+  } finally {
+    setState(() => isLoader = false);
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

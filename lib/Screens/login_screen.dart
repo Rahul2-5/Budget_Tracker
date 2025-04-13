@@ -15,8 +15,10 @@ class _LoginViewState extends State<LoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final authservice = AuthService();
-  final ValueNotifier<bool> _showPassword = ValueNotifier<bool>(true);    //* lightweight alternative to setstate()
-  bool isLoading = false;
+  final ValueNotifier<bool> _showPassword =
+      ValueNotifier<bool>(true); //* lightweight alternative to setstate()
+  bool isLoading = false; // for credintial login
+  bool googleIsLoading = false; // for google login
 
   var appvalidator = Appvalidator();
 
@@ -24,14 +26,14 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() => isLoading = true);
-      
+
       var data = {
-        "email": _emailController.text.trim(),      //* 
+        "email": _emailController.text.trim(), //*
         "password": _passwordController.text,
       };
 
       await authservice.login(data, context);
-      
+
       setState(() => isLoading = false);
     }
   }
@@ -39,9 +41,11 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false, // Prevents full screen rebuild when keyboard appears
+      resizeToAvoidBottomInset:
+          false, // Prevents full screen rebuild when keyboard appears
       backgroundColor: Colors.white,
-      body: SafeArea(                 // ensures it adapts properly to different screen sizes.
+      body: SafeArea(
+        // ensures it adapts properly to different screen sizes.
         child: Column(
           children: [
             Expanded(
@@ -72,6 +76,53 @@ class _LoginViewState extends State<LoginView> {
                             _buildPasswordField(),
                             SizedBox(height: 40.0),
                             _buildLoginButton(),
+                            SizedBox(height: 30.0),
+                            Row(
+                                children: [
+                                  Expanded(
+                                      child: Divider(
+                                    color:Colors.black  
+                                        
+                                  )),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: Text('Or Login with'),
+                                  ),
+                                  Expanded(
+                                      child: Divider(
+                                  color:Colors.black
+                                  ))
+                                ],
+                              ),
+                              SizedBox(
+                               // height: mq.height * 0.008,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  InkWell(
+                                    splashColor:
+                                     Colors.white,
+                                    onTap: (){authservice.loginWithGoogle(context);},
+                                    child: Image(
+                                        width: 28,
+                                        image: AssetImage(
+                                          'assets/images/google.jpg',
+                                        )),
+                                  ),
+                                  InkWell(
+                                    child: CircleAvatar(
+                                        child: Image(
+                                            width: 30,
+                                            image: AssetImage(
+                                              'assets/images/facebook.jpg',
+                                            )),
+                                        backgroundColor: Colors.transparent),
+                                  )
+                                ],
+                              ),
                             SizedBox(height: 30.0),
                             _buildSignUpButton(),
                           ],

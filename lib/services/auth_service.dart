@@ -2,10 +2,65 @@ import 'package:budget_tracker/Screens/Dashboard.dart';
 import 'package:budget_tracker/services/db.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final Db _db = Db();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+ Future<void> loginWithGoogle(BuildContext context) async {
+  try {
+    // Force account picker
+    await GoogleSignIn().signOut();
+
+    final googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) {
+      print("Google sign-in was cancelled by the user.");
+      return;
+    }
+
+    final googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+      accessToken: googleAuth.accessToken,
+    );
+
+    // Firebase sign-in
+    UserCredential userCredential =
+        await _auth.signInWithCredential(credential);
+
+    final user = userCredential.user;
+    if (user == null) throw Exception("User is null after Google sign-in");
+
+    // 🔍 Check if user exists in Firestore
+    final userDoc = await _db.getUser(user.uid);
+    if (!userDoc.exists) {
+      // 📝 Create new user entry in Firestore
+      await _db.addUser({
+        "email": user.email,
+        "name": user.displayName,
+        "photoUrl": user.photoURL,
+        "createdAt": DateTime.now().toIso8601String(),
+        "provider": "google",
+      }, user.uid);
+
+      print("🆕 Google user added to Firestore.");
+    }
+
+    // ✅ Navigate to Dashboard
+    if (context.mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => Dashboard()),
+      );
+    }
+  } catch (e) {
+    print("❌ Google login failed: $e");
+    _showErrorDialog(context, "Google Login Error", e.toString());
+  }
+}
+
+
+
 
   Future<void> createUser(Map<String, dynamic> data, BuildContext context) async {
     try {
@@ -87,5 +142,6 @@ class AuthService {
     },
   );
 }
+   
 
 }
