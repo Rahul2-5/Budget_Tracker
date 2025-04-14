@@ -42,6 +42,7 @@ class AuthService {
         "photoUrl": user.photoURL,
         "createdAt": DateTime.now().toIso8601String(),
         "provider": "google",
+        
       }, user.uid);
 
       print("🆕 Google user added to Firestore.");

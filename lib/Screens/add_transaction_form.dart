@@ -68,7 +68,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   final titleEditController = TextEditingController();
   final uid = Uuid();
 
-  void _submitForm() async {
+ void _submitForm() async {
   if (!_formKey.currentState!.validate()) return;
 
   setState(() => isLoader = true);
@@ -84,7 +84,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     int amount;
 
-    // **Handle invalid amount input**
     try {
       amount = int.parse(amountEditController.text);
     } catch (e) {
@@ -101,26 +100,25 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
     final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
     final userDoc = await userDocRef.get();
 
-    // ✅ If user document doesn't exist or is missing required fields, initialize it
-    if (!userDoc.exists || !userDoc.data()!.containsKey('remainingAmount')) {
+    // 🔒 Use null-aware default values in case fields are missing
+    final data = userDoc.data() ?? {};
+    int remainingAmount = data['remainingAmount'] ?? 0;
+    int totalCredit = data['totalCredit'] ?? 0;
+    int totalDebit = data['totalDebit'] ?? 0;
+
+    if (!userDoc.exists) {
       await userDocRef.set({
         "name": user.displayName ?? '',
         "email": user.email ?? '',
         "photoUrl": user.photoURL ?? '',
         "provider": user.providerData.isNotEmpty ? user.providerData[0].providerId : 'google',
         "createdAt": DateTime.now().toIso8601String(),
-        "remainingAmount": 0,
-        "totalCredit": 0,
-        "totalDebit": 0,
+        "remainingAmount": remainingAmount,
+        "totalCredit": totalCredit,
+        "totalDebit": totalDebit,
         "updatedAt": timestamp,
       });
     }
-
-    // Fetch updated user doc after initialization
-    final updatedUserDoc = await userDocRef.get();
-    int remainingAmount = updatedUserDoc['remainingAmount'];
-    int totalCredit = updatedUserDoc['totalCredit'];
-    int totalDebit = updatedUserDoc['totalDebit'];
 
     if (type == 'credit') {
       remainingAmount += amount;
@@ -137,7 +135,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
       "updatedAt": timestamp,
     });
 
-    var data = {
+    var transactionData = {
       "id": id,
       "title": titleEditController.text,
       "amount": amount,
@@ -150,15 +148,14 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
       "category": category,
       "date": date.toIso8601String(),
 
-      // ✅ Optional: store user info in the transaction too
+      // Optional user info
       "name": user.displayName ?? '',
       "email": user.email ?? '',
       "photoUrl": user.photoURL ?? '',
       "provider": user.providerData.isNotEmpty ? user.providerData[0].providerId : 'google',
     };
 
-    // Save transaction to Firestore
-    await userDocRef.collection("transactions").doc(id).set(data);
+    await userDocRef.collection("transactions").doc(id).set(transactionData);
 
     print("Transaction added successfully");
     Navigator.pop(context); // Close the dialog
@@ -171,6 +168,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
     setState(() => isLoader = false);
   }
 }
+
 
 
   @override
