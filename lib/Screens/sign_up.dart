@@ -17,8 +17,8 @@ class _SignUpViewState extends State<SignUpView> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final ValueNotifier<bool> _showPassword = ValueNotifier<bool>(true);
- final AuthService _authService = AuthService(); 
-final Appvalidator _appValidator = Appvalidator();  
+  final AuthService _authService = AuthService();
+  final Appvalidator _appValidator = Appvalidator();
   bool _isLoading = false;
 
   @override
@@ -78,17 +78,17 @@ final Appvalidator _appValidator = Appvalidator();
             key: _formKey,
             child: Column(
               children: [
-                _buildTextField(
-                    _userNameController, 'Username', Icons.person, _appValidator.validateUsername),
+                _buildTextField(_userNameController, 'Username', Icons.person,
+                    _appValidator.validateUsername),
                 SizedBox(height: 16),
-                _buildTextField(
-                    _emailController, 'Email', Icons.email, _appValidator.validateEmail),
+                _buildTextField(_emailController, 'Email', Icons.email,
+                    _appValidator.validateEmail),
                 SizedBox(height: 16),
-                _buildTextField(
-                    _phoneController, 'Phone Number', Icons.call, _appValidator.validatePhoneNumber),
+                _buildTextField(_phoneController, 'Phone Number', Icons.call,
+                    _appValidator.validatePhoneNumber),
                 SizedBox(height: 16),
                 _buildPasswordField(),
-                SizedBox(height: 40.0),
+                SizedBox(height: 30.0),
                 SizedBox(
                   height: 50,
                   width: double.infinity,
@@ -101,14 +101,93 @@ final Appvalidator _appValidator = Appvalidator();
                     ),
                     onPressed: _isLoading ? null : _submitForm,
                     child: _isLoading
-                        ? Center(child: CircularProgressIndicator(color: Colors.white))
+                        ? Center(
+                            child:
+                                CircularProgressIndicator(color: Colors.white))
                         : Text(
                             'Create',
                             style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                   ),
                 ),
+                SizedBox(
+                  height: 30.0,
+                ),
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: Colors.black)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text('Or Login with'),
+                    ),
+                    Expanded(child: Divider(color: Colors.black))
+                  ],
+                ),
+                SizedBox(
+                    // height: mq.height * 0.008,
+                    ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Google Login (rectangular splash, as image is square)
+                    Material(
+                      color: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            12.0), // 👈 match the image corner radius
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: InkWell(
+                        splashColor: Colors.white,
+                        onTap: () {
+                          _authService.loginWithGoogle(context);
+                        },
+                        child: Ink(
+                          width: 34, // optional: can wrap image nicely
+                          height: 34,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                12.0), // 👈 clip the image too
+                            child: Image.asset(
+                              'assets/images/google.jpg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Facebook Login (circle splash to match CircleAvatar)
+                    Material(
+                      color: Colors.transparent,
+                      shape: const CircleBorder(),
+                      clipBehavior: Clip.antiAlias,
+                      child: InkWell(
+                        splashColor: Colors.white,
+                        onTap: () {
+                          // Add your Facebook login function here
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          child: Image(
+                            width: 34,
+                            image: AssetImage('assets/images/facebook.jpg'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
                 SizedBox(height: 30.0),
+                Text(
+                  "Already have an account ?",
+                  style: TextStyle(fontSize: 15),
+                ),
+                // SizedBox(height: 10.0),
                 TextButton(
                   onPressed: () {
                     Navigator.pushReplacement(
@@ -120,7 +199,7 @@ final Appvalidator _appValidator = Appvalidator();
                     'Login',
                     style: TextStyle(
                       color: Colors.blue.shade700,
-                      fontSize: 20,
+                      fontSize: 23,
                     ),
                   ),
                 ),
@@ -132,8 +211,8 @@ final Appvalidator _appValidator = Appvalidator();
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon,
-      String? Function(String?) validator) {
+  Widget _buildTextField(TextEditingController controller, String label,
+      IconData icon, String? Function(String?) validator) {
     return TextFormField(
       controller: controller,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -155,17 +234,21 @@ final Appvalidator _appValidator = Appvalidator();
           decoration: InputDecoration(
             labelText: "Password",
             fillColor: Colors.white,
-            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
-            focusedBorder:
-                OutlineInputBorder(borderSide: BorderSide(color: Colors.blue.shade900)),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue),
+                borderRadius: BorderRadius.circular(10.0)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue.shade900)),
             labelStyle: TextStyle(color: Colors.blue.shade900),
             filled: true,
             suffixIcon: IconButton(
-              icon: Icon(showPassword ? Icons.visibility : Icons.visibility_off),
+              icon:
+                  Icon(showPassword ? Icons.visibility : Icons.visibility_off),
               onPressed: () => _showPassword.value = !showPassword,
               color: Colors.blue.shade800,
             ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
           ),
           validator: _appValidator.validatePassword,
         );
@@ -177,8 +260,11 @@ final Appvalidator _appValidator = Appvalidator();
     return InputDecoration(
       labelText: label,
       fillColor: Colors.white,
-      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
-      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blue.shade900)),
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+          borderRadius: BorderRadius.circular(10.0)),
+      focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue.shade900)),
       labelStyle: TextStyle(color: Colors.blue.shade900),
       filled: true,
       suffixIcon: Icon(suffixIcon, color: Colors.blue.shade800),
