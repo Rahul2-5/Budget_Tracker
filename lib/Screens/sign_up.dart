@@ -134,7 +134,7 @@ class _SignUpViewState extends State<SignUpView> {
                       color: Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
-                            12.0), // 👈 match the image corner radius
+                            12.0), //  match the image corner radius
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
@@ -150,7 +150,7 @@ class _SignUpViewState extends State<SignUpView> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(
-                                12.0), // 👈 clip the image too
+                                12.0), //  clip the image too
                             child: Image.asset(
                               'assets/images/google.jpg',
                               fit: BoxFit.cover,
