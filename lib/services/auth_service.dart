@@ -32,7 +32,7 @@ class AuthService {
     final user = userCredential.user;
     if (user == null) throw Exception("User is null after Google sign-in");
 
-    // 🔍 Check if user exists in Firestore
+    //  Check if user exists in Firestore
     final userDoc = await _db.getUser(user.uid);
     if (!userDoc.exists) {
       // 📝 Create new user entry in Firestore
@@ -48,14 +48,14 @@ class AuthService {
       print("🆕 Google user added to Firestore.");
     }
 
-    // ✅ Navigate to Dashboard
+    //  Navigate to Dashboard
     if (context.mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => Dashboard()),
       );
     }
   } catch (e) {
-    print("❌ Google login failed: $e");
+    print(" Google login failed: $e");
     _showErrorDialog(context, "Google Login Error", e.toString());
   }
 }
