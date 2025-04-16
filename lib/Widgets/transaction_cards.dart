@@ -6,20 +6,21 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class TransactionCard extends StatelessWidget {
-   TransactionCard({
-    super.key,required this.data,
+  TransactionCard({
+    super.key,
+    required this.data,
   });
+
   final dynamic data;
-  var appIcons  = AppIcons();
+  var appIcons = AppIcons();
 
   @override
   Widget build(BuildContext context) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(data['timestamp']);
     String formatedDate = DateFormat('d MMM hh:mma').format(date);
 
-
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical:8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -27,16 +28,15 @@ class TransactionCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               offset: Offset(0, 10),
-              // ignore: deprecated_member_use
               color: Colors.grey.withOpacity(0.15),
               blurRadius: 10.0,
-              spreadRadius: 6.0
+              spreadRadius: 6.0,
             )
-          ]
+          ],
         ),
         child: ListTile(
-          minVerticalPadding: 12,
-          contentPadding:  EdgeInsets.symmetric(horizontal: 10 , vertical: 0),
+          minVerticalPadding: 11,
+          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
           leading: Container(
             width: 70,
             height: 110,
@@ -45,34 +45,45 @@ class TransactionCard extends StatelessWidget {
               width: 30,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: data['type'] == 'credit' 
-                ? Colors.green.withOpacity(0.2) 
-                :  Colors.red.withOpacity(0.2),
+                color: data['type'] == 'credit'
+                    ? Colors.green.withOpacity(0.2)
+                    : Colors.red.withOpacity(0.2),
               ),
-            
               child: Center(
-                child: FaIcon(appIcons.getExpenseCategoryIcons('${data['category']}'),
-               color: data['type'] == 'credit' 
-                ? Colors.green.withOpacity(0.9) 
-                :  Colors.red.withOpacity(0.9),
+                child: FaIcon(
+                  appIcons.getExpenseCategoryIcons('${data['category']}'),
+                  color: data['type'] == 'credit'
+                      ? Colors.green.withOpacity(0.9)
+                      : Colors.red.withOpacity(0.9),
+                ),
               ),
-              ),
-              
             ),
           ),
           title: Row(
             children: [
-              Text("${data['title']}"),
-              Spacer(),
+              Expanded(
+                child: Text(
+                  "${data['title']}",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
               Text(
                 "${data['type'] == 'credit' ? '+' : '-'} ₹${data['amount']}",
-                  style: TextStyle( color: data['type'] == 'credit' 
-                ? Colors.green.withOpacity(0.9) 
-                :  Colors.red.withOpacity(0.9),)),
+                style: TextStyle(
+                  color: data['type'] == 'credit'
+                      ? Colors.green.withOpacity(0.9)
+                      : Colors.red.withOpacity(0.9),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
           subtitle: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -82,10 +93,14 @@ class TransactionCard extends StatelessWidget {
                   Text(
                     "₹ ${data["remainingAmount"]}",
                     style: TextStyle(color: Colors.grey, fontSize: 13),
-                  )
+                  ),
                 ],
               ),
-              Text(formatedDate, style: TextStyle(color: Colors.grey), )
+              SizedBox(height: 4),
+              Text(
+                formatedDate,
+                style: TextStyle(color: Colors.grey),
+              ),
             ],
           ),
         ),
