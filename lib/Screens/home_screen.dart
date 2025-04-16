@@ -18,14 +18,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var isLogoutLoader = false;
 
-  String username = "User"; //  Username state
+  String username = "User"; //  Username 
   final userId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
     super.initState();
-    createOrUpdateUserInFirestore(); // 🔧 Save user info if new
-    fetchUsername(); // 🔧 Fetch username on init
+    createOrUpdateUserInFirestore(); //  Save user info if new
+    fetchUsername(); //  Fetch username 
   }
 
   // 🔧 Save user data on first login if not already present

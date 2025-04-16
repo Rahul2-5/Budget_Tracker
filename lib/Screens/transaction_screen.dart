@@ -5,57 +5,58 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionScreen extends StatefulWidget {
- TransactionScreen({super.key,});
-
+  TransactionScreen({
+    super.key,
+  });
 
   @override
   State<TransactionScreen> createState() => _TransactionScreenState();
 }
 
 class _TransactionScreenState extends State<TransactionScreen> {
-    var category = "All";
+  var category = "All";
   String monthYear = "";
 
   @override
-  void initState(){
+  void initState() {
     DateTime now = DateTime.now();
     setState(() {
       monthYear = DateFormat('MMM y').format(now);
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 248, 247, 247),
       appBar: AppBar(
         title: Text("Details"),
-        backgroundColor:Color.fromARGB(255, 248, 247, 247),
+        backgroundColor: Color.fromARGB(255, 248, 247, 247),
       ),
       body: Column(
         children: [
           TimeLineMonth(
             onChanged: (String? value) {
-             if(value != null){
-              setState(() {
-                monthYear = value;
-              });
-              
-            }
-           },),
-          CategoryList(
-            onChanged: (String? value){
-            if(value != null){
-              setState(() {
-                 category = value;
-              });
-             
-            }
-          }
+              if (value != null) {
+                setState(() {
+                  monthYear = value;
+                });
+              }
+            },
           ),
-          TypeTabBar(category:category , monthYear:monthYear),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: CategoryList(onChanged: (String? value) {
+              if (value != null) {
+                setState(() {
+                  category = value;
+                });
+              }
+            }),
+          ),
+          TypeTabBar(category: category, monthYear: monthYear),
         ],
-        ),
+      ),
     );
   }
 }
