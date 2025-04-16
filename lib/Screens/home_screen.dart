@@ -6,6 +6,7 @@ import 'package:budget_tracker/Widgets/hero_card.dart';
 import 'package:budget_tracker/Widgets/transaction_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +18,68 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var isLogoutLoader = false;
 
+  String username = "User"; //  Username state
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+
+  @override
+  void initState() {
+    super.initState();
+    createOrUpdateUserInFirestore(); // 🔧 Save user info if new
+    fetchUsername(); // 🔧 Fetch username on init
+  }
+
+  // 🔧 Save user data on first login if not already present
+  Future<void> createOrUpdateUserInFirestore() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+    final docSnapshot = await userDoc.get();
+
+    if (!docSnapshot.exists) {
+      final isGoogle = user.providerData.any((info) => info.providerId == 'google.com');
+
+      final userData = {
+        'provider': isGoogle ? 'google' : 'email',
+        'name': isGoogle ? user.displayName ?? 'User' : null,
+        'username': isGoogle ? null : user.email?.split('@')[0] ?? 'User',
+        'email': user.email,
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+
+      await userDoc.set(userData);
+    }
+  }
+
+  // 🔧 Function to fetch name or username from Firestore
+  Future<void> fetchUsername() async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (userDoc.exists) {
+        final data = userDoc.data() as Map<String, dynamic>;
+        print("User data: $data"); // 🔧 Debug
+
+        String? name;
+
+        if (data.containsKey('name')) {
+          name = data['name'];
+        } else if (data.containsKey('username')) {
+          name = data['username'];
+        }
+
+        setState(() {
+          username = name != null && name.trim().isNotEmpty ? name : "User";
+        });
+      }
+    } catch (e) {
+      print("Error fetching user info: $e");
+    }
+  }
+
+  // 🔧 Logout logic
   logOut() async {
     setState(() {
       isLogoutLoader = true;
@@ -32,8 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  final userId = FirebaseAuth.instance.currentUser!.uid;
-
   _dialogBuilder(BuildContext context) {
     return showDialog(
       context: context,
@@ -48,29 +109,37 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Set the background color of the entire screen to white
+      backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade900,
         onPressed: () {
           _dialogBuilder(context);
         },
-        child: Icon(
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),
       ),
       appBar: AppBar(
         backgroundColor: Colors.blue.shade900,
-        title: Text(
-          "Hello,",
-          style: TextStyle(color: Colors.white),
+        title: RichText(
+          text: TextSpan(
+            style: const TextStyle(color: Colors.white, fontSize: 20),
+            children: [
+              const TextSpan(text: "Hello, "),
+              TextSpan(
+                text: username,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
         actions: [
           IconButton(
             onPressed: logOut,
             icon: isLogoutLoader
-                ? CircularProgressIndicator(color: Colors.white)
-                : Icon(
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Icon(
                     Icons.exit_to_app,
                     color: Colors.white,
                   ),
@@ -82,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             HeroCard(userId: userId),
             Container(
-              color: Colors.white, // Ensures TransactionCards also has a white background
+              color: Colors.white,
               child: TransactionCards(),
             ),
           ],

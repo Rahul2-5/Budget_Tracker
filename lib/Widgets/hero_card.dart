@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-/// 🔧 Rewritten to calculate values from transactions instead of user doc
+///  Rewritten to calculate values from transactions instead of user doc
 class HeroCard extends StatelessWidget {
   HeroCard({super.key, required this.userId});
 
@@ -9,7 +9,7 @@ class HeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// 🔧 Listen to user's transactions
+    /// Listen to user's transactions
     final Stream<QuerySnapshot> _transactionStream = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -23,12 +23,12 @@ class HeroCard extends StatelessWidget {
           return const Text('Something went wrong');
         }
 
-        /// 🔧 If no data or empty list, show 0 values
+        ///  If no data or empty list, show placeholders
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Cards(
-            totalCredit: 0,
-            totalDebit: 0,
-            remainingAmount: 0,
+            totalCredit: null,
+            totalDebit: null,
+            remainingAmount: null,
           );
         }
 
@@ -37,7 +37,7 @@ class HeroCard extends StatelessWidget {
         double totalCredit = 0;
         double totalDebit = 0;
 
-        /// 🔧 Calculate totals
+        ///  Calculate totals
         for (var doc in transactions) {
           final data = doc.data() as Map<String, dynamic>;
           final type = data['type'];
@@ -71,10 +71,13 @@ class Cards extends StatelessWidget {
     required this.remainingAmount,
   });
 
-  /// 🔧 Replaced data map with individual fields
-  final double totalCredit;
-  final double totalDebit;
-  final double remainingAmount;
+  final double? totalCredit;
+  final double? totalDebit;
+  final double? remainingAmount;
+
+  String formatAmount(double? amount) {
+    return amount == null ? "—" : "₹ ${amount.toInt()}";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +101,7 @@ class Cards extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "₹ ${remainingAmount.toStringAsFixed(2)}",
+                  formatAmount(remainingAmount),
                   style: const TextStyle(
                     fontSize: 44,
                     color: Colors.white,
@@ -124,7 +127,7 @@ class Cards extends StatelessWidget {
                   child: CardOne(
                     color: Colors.green,
                     heading: 'Credit',
-                    amount: totalCredit.toStringAsFixed(2),
+                    amount: totalCredit,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -132,7 +135,7 @@ class Cards extends StatelessWidget {
                   child: CardOne(
                     color: Colors.red,
                     heading: 'Debit',
-                    amount: totalDebit.toStringAsFixed(2),
+                    amount: totalDebit,
                   ),
                 ),
               ],
@@ -154,10 +157,12 @@ class CardOne extends StatelessWidget {
 
   final Color color;
   final String heading;
-  final String amount;
+  final double? amount;
 
   @override
   Widget build(BuildContext context) {
+    final displayAmount = amount == null ? "—" : "₹ ${amount?.toInt()}";
+
     return Container(
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
@@ -177,7 +182,7 @@ class CardOne extends StatelessWidget {
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    "₹ $amount",
+                    displayAmount,
                     style: TextStyle(
                       color: color,
                       fontSize: 30,
