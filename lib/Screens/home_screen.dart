@@ -120,32 +120,50 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.white,
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade900,
-        title: RichText(
-          text: TextSpan(
-            style: const TextStyle(color: Colors.white, fontSize: 20),
-            children: [
-              const TextSpan(text: "Hello, "),
-              TextSpan(
-                text: username,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+     appBar: AppBar(
+  backgroundColor: Colors.blue.shade900,
+  title: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+   mainAxisSize: MainAxisSize.min,
+    children: [
+      const Text(
+        "Hello,",
+        style: TextStyle(
+          color: Colors.white70,
+          fontSize: 23,
         ),
-        actions: [
-          IconButton(
-            onPressed: logOut,
-            icon: isLogoutLoader
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Icon(
-                    Icons.exit_to_app,
-                    color: Colors.white,
-                  ),
-          )
-        ],
       ),
+      Text(
+        username,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 23,
+          fontWeight: FontWeight.bold,
+        ),
+        overflow: TextOverflow.ellipsis,
+      ),
+    ],
+  ),
+  actions: [
+    IconButton(
+      onPressed: logOut,
+      icon: isLogoutLoader
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
+            )
+          : const Icon(
+              Icons.exit_to_app,
+              color: Colors.white,
+            ),
+    )
+  ],
+),
+
       body: SingleChildScrollView(
         child: Column(
           children: [
