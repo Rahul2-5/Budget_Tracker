@@ -16,7 +16,7 @@ class _LoginViewState extends State<LoginView> {
   final _passwordController = TextEditingController();
   final authservice = AuthService();
   final ValueNotifier<bool> _showPassword =
-      ValueNotifier<bool>(true); //* lightweight alternative to setstate()
+      ValueNotifier<bool>(false); //* lightweight alternative to setstate()
   bool isLoading = false; // for credintial login
   bool googleIsLoading = false; // for google login
 
@@ -192,7 +192,7 @@ class _LoginViewState extends State<LoginView> {
       builder: (context, showPassword, child) {
         return TextFormField(
           controller: _passwordController,
-          obscureText: showPassword,
+          obscureText: !showPassword,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: TextStyle(color: Colors.black),
           decoration: InputDecoration(

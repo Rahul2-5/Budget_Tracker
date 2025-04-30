@@ -16,7 +16,7 @@ class _SignUpViewState extends State<SignUpView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final ValueNotifier<bool> _showPassword = ValueNotifier<bool>(true);
+  final ValueNotifier<bool> _showPassword = ValueNotifier<bool>(false);
   final AuthService _authService = AuthService();
   final Appvalidator _appValidator = Appvalidator();
   bool _isLoading = false;
@@ -57,7 +57,7 @@ class _SignUpViewState extends State<SignUpView> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: ListView(
-        physics: BouncingScrollPhysics(),
+        physics: BouncingScrollPhysics(), // ios
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: EdgeInsets.all(16.0),
         children: [
@@ -227,7 +227,7 @@ class _SignUpViewState extends State<SignUpView> {
       valueListenable: _showPassword,
       builder: (context, showPassword, child) {
         return TextFormField(
-          obscureText: showPassword,
+          obscureText: !showPassword,
           controller: _passwordController,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: TextStyle(color: Colors.black),

@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchUsername(); //  Fetch username 
   }
 
-  // 🔧 Save user data on first login if not already present
+  //  Save user data on first login if not already present
   Future<void> createOrUpdateUserInFirestore() async {
     final user = FirebaseAuth.instance.currentUser!;
     final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // 🔧 Function to fetch name or username from Firestore
+  //  Function to fetch name or username from Firestore
   Future<void> fetchUsername() async {
     try {
       final userDoc = await FirebaseFirestore.instance
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (userDoc.exists) {
         final data = userDoc.data() as Map<String, dynamic>;
-        print("User data: $data"); // 🔧 Debug
+        print("User data: $data"); //  Debug
 
         String? name;
 
@@ -79,21 +79,27 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // 🔧 Logout logic
-  logOut() async {
-    setState(() {
-      isLogoutLoader = true;
-    });
+  //  Logout logic
+logOut() async {
+  setState(() {
+    isLogoutLoader = true;
+  });
 
-    await FirebaseAuth.instance.signOut();
+  await FirebaseAuth.instance.signOut();
+
+  if (mounted) {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => LoginView()),
     );
+  }
 
+  if (mounted) {
     setState(() {
       isLogoutLoader = false;
     });
   }
+}
+
 
   _dialogBuilder(BuildContext context) {
     return showDialog(
