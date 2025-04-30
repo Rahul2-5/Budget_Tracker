@@ -45,7 +45,7 @@ class AuthService {
         
       }, user.uid);
 
-      print("🆕 Google user added to Firestore.");
+      print(" Google user added to Firestore.");
     }
 
     //  Navigate to Dashboard

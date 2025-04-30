@@ -6,50 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
-class AddTransactionScreen extends StatelessWidget {
-  const AddTransactionScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue.shade50,
-      appBar: AppBar(
-        title: const Text("Budget Tracker"),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-      ),
-      body: const Center(
-        child: Text("Press the + button to add a transaction"),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showAddTransactionDialog(context);
-        },
-        backgroundColor: Colors.blue.shade800,
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-void showAddTransactionDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return Dialog(
-        backgroundColor: Colors.blue.shade50,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: const AddTransactionForm(),
-        ),
-      );
-    },
-  );
-}
-
 class AddTransactionForm extends StatefulWidget {
   const AddTransactionForm({super.key});
 
@@ -86,6 +42,12 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
 
     try {
       amount = int.parse(amountEditController.text);
+      if(amount <= 0){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Amount must be greater than 0")),
+        );
+        return;
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please enter a valid number")),
