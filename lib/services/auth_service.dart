@@ -35,7 +35,7 @@ class AuthService {
     //  Check if user exists in Firestore
     final userDoc = await _db.getUser(user.uid);
     if (!userDoc.exists) {
-      // 📝 Create new user entry in Firestore
+      // Create new user entry in Firestore
       await _db.addUser({
         "email": user.email,
         "name": user.displayName,
