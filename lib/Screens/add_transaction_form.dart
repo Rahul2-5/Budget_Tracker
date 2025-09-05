@@ -62,7 +62,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
     final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
     final userDoc = await userDocRef.get();
 
-    // 🔒 Use null-aware default values in case fields are missing
+    //  Use null-aware default values in case fields are missing
     final data = userDoc.data() ?? {};
     int remainingAmount = data['remainingAmount'] ?? 0;
     int totalCredit = data['totalCredit'] ?? 0;

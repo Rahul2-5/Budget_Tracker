@@ -1,7 +1,7 @@
 plugins {
     id "com.android.application"
-    id 'com.google.gms.google-services'
-    id "kotlin-android"
+    id "com.google.gms.google-services"
+    id "org.jetbrains.kotlin.android"    // ✅ fixed plugin name
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -15,18 +15,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-    jvmTarget = '17'
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-
+    kotlin {
+        jvmToolchain(17)   // ✅ modern way
+    }
 
     defaultConfig {
         applicationId = "com.example.budget_tracker"
-        minSdk = 23
+        minSdkVersion = flutter.minSdkVersion
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
