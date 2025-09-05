@@ -4,8 +4,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.2' // Correct Android Gradle Plugin version
-        classpath 'com.google.gms:google-services:4.4.0' // Required for Firebase
+        //  REMOVE: AGP classpath (already defined in settings.gradle)
+        // classpath "com.android.tools.build:gradle:8.5.2"
+
+        // ✅ Keep only Firebase / Google services
+        classpath 'com.google.gms:google-services:4.4.0'
     }
 }
 
@@ -29,5 +32,5 @@ tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
 
-// Apply Google Services plugin
-apply plugin: 'com.google.gms.google-services'
+// Do NOT apply plugins globally here, only inside app-level build.gradle
+// remove this line: apply plugin: 'com.google.gms.google-services'
