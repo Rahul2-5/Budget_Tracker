@@ -30,7 +30,7 @@ class _LoginViewState extends State<LoginView> {
       var data = {
         "email": _emailController.text.trim(), //*
         "password": _passwordController.text,
-      };
+       };
 
       await authservice.login(data, context);
 
